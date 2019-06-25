@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>121-130章总结</title>
+</head>
+<body>
+    
+<pre>
+121. 滚轮事件
+onmousewheel鼠标滚轮滚动的事件，会在滚轮滚动时触发，
+但是火狐不支持该属性
+在火狐中需要使用 DOMMouseScroll 来绑定滚动事件
+注意该事件需要通过addEventListener()函数来绑定
+</pre>
+<style type="text/css">
+#glbox{
+    width: 100px;
+    height: 100px;
+    background-color: red;
+}
+</style>
+<div id="glbox"></div>
+<script type="text/javascript">
+    console.log("第121");
+    var glbox = document.getElementById("glbox")
+    glbox.onmousewheel = function(event){
+        event = event||window.event
+        //event.wheelDelta 可以获取鼠标滚轮滚动的方向
+        //向上滚 120   向下滚 -120
+        //wheelDelta这个值我们不看大小，只看正负
+        //alert( event.wheelDelta )
+        //wheelDelta这个属性火狐中不支持
+        //在火狐中使用event.detail来获取滚动的方向
+        //向上滚 -3  向下滚 3
+        //alert(event.detail);
+        if ( event.wheelDelta > 0 || event.detail < 0) {
+            if( this.clientHeight >10){
+                this.style.height = this.clientHeight -10 + "px"
+            }
+        } else{
+            this.style.height = this.clientHeight + 10 + "px"
+        }
+        /*
+         * 使用 addEventListener()方法绑定响应函数，取消默认行为时不能使用return false
+         * 需要使用event来取消默认行为event.preventDefault();
+         * 但是IE8不支持event.preventDefault();这个玩意，如果直接调用会报错
+         */
+        event.preventDefault && event.preventDefault();
+        /*
+         * 当滚轮滚动时，如果浏览器有滚动条，滚动条会随之滚动，
+         * 这是浏览器的默认行为，如果不希望发生，则可以取消默认行为
+         */
+        return false;
+    }
+    
+    //为火狐绑定滚轮事件
+    bind(glbox,"DOMMouseScroll",glbox.onmousewheel);
+
+    function bind(obj , eventStr , callback){
+        if(obj.addEventListener){
+            obj.addEventListener(eventStr , callback , false);
+        }else{
+            obj.attachEvent("on"+eventStr , function(){
+                callback.call(obj);
+            });
+        }
+    }
+</script>
+
+<pre>
+122. 键盘事件
+onkeydown
+- 按键被按下
+- 对于onkeydown来说如果一直按着某个按键不松手，则事件会一直触发
+- 当onkeydown连续触发时，第一次和第二次之间会间隔稍微长一点，其他的会非常的快
+这种设计是为了防止误操作的发生。
+onkeyup
+- 按键被松开
+键盘事件一般都会绑定给一些可以获取到焦点的对象或者是document。
+可以通过keyCode来获取按键的编码
+通过它可以判断哪个按键被按下
+除了 keyCode，事件对象中还提供了几个属性
+altKey，ctrlKey，shiftKey
+- 这个三个用来判断alt ctrl 和 shift是否被按下，如果按下则返回true，否则返回false
+</pre>
+<div class="">
+    <input type="" placeholder="不能输入数字" />
+</div>
+<script type="text/javascript">
+    console.log("第122");
+    document.onkeydown = function(event){
+        event = event || window.event
+        var result = event.keyCode
+            console.log("当前按下的按键值为：" + result)
+        if ( event.ctrlKey ){
+            console.log("当前的按下的按键为：Ctrl")
+        }
+        //判断y和ctrl是否同时被按下
+        if( event.keyCode === 89 && event.ctrlKey ){
+            console.log("ctrl和y都被按下了");
+        }
+    }
+    document.onkeyup = function(){
+        console.log("按键松开了");
+    }
+    var input1 = document.getElementsByTagName("input")
+    input1[0].onkeydown = function(event){
+        event = event || window.event
+        // 使文本框中不能输入数字 48-57
+        if( event.keyCode>=48 && event.keyCode <= 57 ){
+            //在文本框中输入内容，属于onkeydown的默认行为
+            return false
+        }
+    }
+    
+</script>
+
+<pre>
+123. 键盘移动div
+</pre>
+<style type="text/css">
+#mvBox {height: 200px;position: relative;}
+#movebox {width: 100px;height: 100px;background-color: #99FF99;position: absolute;}
+</style>
+<div id="mvBox">
+    <div id="movebox"></div>
+</div>
+
+<script type="text/javascript">
+    console.log("第123");
+    //使div可以根据不同的方向键向不同的方向移动
+    var mvBox = document.getElementById("mvBox")
+    var movebox = document.getElementById("movebox")
+    // 左，上，右，下 37 38 39 40
+    mvBox.onkeydown = function(event){
+        event = event || window.event
+        var speed = 10
+        if(event.ctrlKey){
+            speed = 50
+        }
+        switch(event.keyCode){
+            case 37:
+            movebox.style.left = movebox.offsetLeft - speed +"px"
+            break
+            case 38:
+            movebox.style.top = movebox.offsetTop - speed +"px"
+            break
+            case 39:
+            movebox.style.left = movebox.offsetLeft + speed +"px"
+            break
+            case 40:
+            movebox.style.top = movebox.offsetTop + speed +"px"
+            break
+        }
+    }
+</script>
+
+<pre>
+124. BOM
+- BOM可以使我们通过JS来操作浏览器
+- 在BOM中为我们提供了一组对象，用来完成对浏览器的操作
+- BOM对象
+Window
+- 代表的是整个浏览器的窗口，同时window也是网页中的全局对象
+Navigator
+- 代表的当前浏览器的信息，通过该对象可以来识别不同的浏览器
+Location
+- 代表当前浏览器的地址栏信息，通过Location可以获取地址栏信息，或者操作浏览器跳转页面
+History
+- 代表浏览器的历史记录，可以通过该对象来操作浏览器的历史记录
+由于隐私原因，该对象不能获取到具体的历史记录，只能操作浏览器向前或向后翻页
+而且该操作只在当次访问时有效
+Screen
+- 代表用户的屏幕的信息，通过该对象可以获取到用户的显示器的相关的信息
+这些BOM对象在浏览器中都是作为window对象的属性保存的，
+可以通过window对象来使用，也可以直接使用。
+Navigator
+- 代表的当前浏览器的信息，通过该对象可以来识别不同的浏览器
+- 由于历史原因，Navigator对象中的大部分属性都已经不能帮助我们识别浏览器了
+- 一般我们只会使用userAgent来判断浏览器的信息，
+userAgent是一个字符串，这个字符串中包含有用来描述浏览器信息的内容，不同的浏览器会有不同的 userAgent
+</pre>
+<script type="text/javascript">
+    console.log("第124");
+    
+    console.log( Window )
+    console.log( navigator )
+    console.log( Location )
+    console.log( History )
+    console.log( Screen )
+    
+    var ua = navigator.userAgent
+    console.log( ua )
+    /*
+     * 火狐的userAgent
+     *  Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0
+     * 
+     * Chrome的userAgent
+     *  Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.82 Safari/537.36
+     * 
+     * IE8
+     *  Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/7.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; .NET4.0C; .NET4.0E)
+     * 
+     * IE9
+     *  Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/7.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; .NET4.0C; .NET4.0E)
+     * 
+     * IE10
+     *  Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/7.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; .NET4.0C; .NET4.0E)
+     * 
+     * IE11
+     *  Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; .NET4.0C; .NET4.0E; rv:11.0) like Gecko
+     *  - 在IE11中已经将微软和IE相关的标识都已经去除了，所以我们基本已经不能通过UserAgent来识别一个浏览器是否是IE了
+     */
+    // alert(navigator.appName);
+    if(/firefox/i.test(ua)){
+        console.log("你是火狐！！！");
+    }else if(/chrome/i.test(ua)){
+        console.log("你是Chrome");
+    }else if(/msie/i.test(ua)){
+        console.log("你是IE浏览器~~~");
+    }else if("ActiveXObject" in window){
+        console.log("你是IE11，藏的好深啊~~~");
+    }
+    /*
+     * 如果通过UserAgent不能判断，还可以通过一些浏览器中特有的对象，来判断浏览器的信息
+     * 比如：ActiveXObject
+     */
+    if("ActiveXObject" in window){
+        console.log("你是IE，我已经抓住你了~~~");
+    }else{
+        console.log("你不是IE~~~");
+    }
+</script>
+
+<pre>
+125. History
+- 对象可以用来操作浏览器向前或向后翻页
+</pre>
+<div class="">
+    <h1>History</h1>
+    <button id="htbtn">点我一下</button>
+    <a href="111-120章总结.html" target="_blank">去111-120章总结</a>
+</div>
+<script type="text/javascript">
+    console.log("第125");
+    var htbtn =document.getElementById("htbtn")
+    htbtn.onclick = function(){
+        // length - 属性，可以获取到当成访问的链接数量
+        var hl = history.length
+        console.log(hl)
+        // back() - 可以用来回退到上一个页面，作用和浏览器的回退按钮一样
+        //history.back()
+        // forward() - 可以跳转下一个页面，作用和浏览器的前进按钮一样
+        //history.forward()
+        /*
+         * go()
+         *  - 可以用来跳转到指定的页面
+         *  - 它需要一个整数作为参数
+         *      1:表示向前跳转一个页面 相当于forward()
+         *      2:表示向前跳转两个页面
+         *      -1:表示向后跳转一个页面
+         *      -2:表示向后跳转两个页面
+         */
+        history.go(-1)
+    }
+</script>
+
+<pre>
+126. Location
+该对象中封装了浏览器的地址栏的信息
+</pre>
+<div class="">
+    <button id="ltbtn">点我一下</button>
+</div>
+<script type="text/javascript">
+    console.log("第126");
+    var ltbtn =document.getElementById("ltbtn")
+    ltbtn.onclick = function(){
+        // 如果直接打印location，则可以获取到地址栏的信息（当前页面的完整路径）
+        console.log(location)
+        // 如果直接将location属性修改为一个完整的路径，或相对路径,则我们页面会自动跳转到该路径，并且会生成相应的历史记录
+        // location = "http://www.baidu.com"
+        // assign()- 用来跳转到其他的页面，作用和直接修改location一样
+        // location.assign("http://www.baidu.com")
+        // reload() - 用于重新加载当前页面，作用和刷新按钮一样,如果在方法中传递一个true，作为参数，则会强制清空缓存刷新页面
+        location.reload(true);
+        // replace() - 可以使用一个新的页面替换当前页面，调用完毕也会跳转页面,不会生成历史记录，不能使用回退按钮回退
+        // location.replace("http://www.baidu.com")
+    }
+</script>
+
+<pre>
+127. 定时器简介
+JS的程序的执行速度是非常非常快的,如果希望一段程序，可以每间隔一段时间执行一次，可以使用定时调用.
+setInterval()
+- 定时调用
+- 可以将一个函数，每隔一段时间执行一次
+- 参数：
+1.回调函数，该函数会每隔一段时间被调用一次
+2.每次调用间隔的时间，单位是毫秒
+- 返回值：
+返回一个Number类型的数据
+这个数字用来作为定时器的唯一标识.
+clearInterval()可以用来关闭一个定时器
+方法中需要一个定时器的标识作为参数，这样将关闭标识对应的定时器
+</pre>
+
+<div id="count"></div>
+<script type="text/javascript">
+    console.log("第127");
+    var count =document.getElementById("count")
+    var num = 1
+    var timer = setInterval(function(){
+        count.innerHTML = num++
+        if( num==11 ){
+            clearInterval(timer)
+        }
+    },1000)
+</script>
+
+<pre>
+128. 切换图片练习
+</pre>
+<div class="">
+    <img id="img" src="images/1.jpg"/>
+    <p>
+        <button id="start" href="javascript:;">开始</button>
+        <button id="stop" href="javascript:;">停止</button>
+    </p>
+</div>
+<script type="text/javascript">
+    console.log("第128");
+    var img =document.getElementById("img")
+    var start =document.getElementById("start")
+    var stop =document.getElementById("stop")
+    var imgArr = ["images/1.jpg","images/2.jpg","images/3.jpg","images/4.jpg","images/5.jpg"]
+    var index = 0
+    var timer2 
+    start.onclick = function(){
+        /*
+         * 目前，我们每点击一次按钮，就会开启一个定时器，
+         *  点击多次就会开启多个定时器，这就导致图片的切换速度过快，
+         *  并且我们只能关闭最后一次开启的定时器
+         */
+        //在开启定时器之前，需要将当前元素上的其他定时器关闭
+        clearInterval(timer2)
+        timer2 = setInterval(function(){
+            index++
+            index %= imgArr.length
+            img.src = imgArr[index]
+        },1000)
+    }
+    stop.onclick = function(){
+        clearInterval(timer2)
+    }
+</script>
+
+<pre>
+129. 修改div移动练习
+</pre>
+<div id="editBox" style="height: 300px;position: relative;">
+    <div id="editMove" style="position: absolute;height: 100px;width: 100px;background-color: #f00;"></div>
+</div>
+<script type="text/javascript">
+    console.log("第129");
+    var dir = 0
+    var speed = 10
+    var timer3
+    var editBox = document.getElementById("editBox")
+    var editMove = document.getElementById("editMove")
+    timer3 = setInterval(function(){
+        switch(dir){
+            case 37:
+                //alert("向左"); left值减小
+                editMove.style.left = editMove.offsetLeft - speed + "px";
+                break;
+            case 39:
+                //alert("向右");
+                editMove.style.left = editMove.offsetLeft + speed + "px";
+                break;
+            case 38:
+                //alert("向上");
+                editMove.style.top = editMove.offsetTop - speed + "px";
+                break;
+            case 40:
+                //alert("向下");
+                editMove.style.top = editMove.offsetTop + speed + "px";
+                break;
+        }
+    },30)
+    editBox.onkeydown = function(event){
+        event = event || window.event
+        dir = event.keyCode
+    }
+    editBox.onkeyup = function(){
+        dir=0
+    }
+    
+</script>
+
+<pre>
+130. 延时调用
+延时调用一个函数不马上执行，而是隔一段时间以后在执行，而且只会执行一次.
+延时调用和定时调用的区别，定时调用会执行多次，而延时调用只会执行一次.
+延时调用和定时调用实际上是可以互相代替的，在开发中可以根据自己需要去选择.
+使用clearTimeout()来关闭一个延时调用
+</pre>
+<script type="text/javascript">
+    console.log("第130");
+    var ynum = 1
+    var timer4 = setTimeout(function(){
+        console.log(ynum++)
+    },1000)
+    clearTimeout(timer4)
+</script>
+
+</body>
+</html>

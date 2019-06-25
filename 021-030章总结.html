@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>021-030章总结</title>
+</head>
+<body>
+<pre>
+021. 赋值运算符
+=
+可以将符号右侧的值赋值给符号左侧的变量
+</pre>
+<script type="text/javascript">
+    console.log("第021");
+    /*
+     * =
+     *  可以将符号右侧的值赋值给符号左侧的变量
+     * += 
+     *  a += 5 等价于 a = a + 5
+     * -=
+     *  a -= 5 等价于 a = a - 5
+     * *=
+     *  a *= 5 等价于 a = a * 5
+     * /=
+     *  a /= 5 等价于 a = a / 5
+     * %=
+     *  a %= 5 等价于 a = a % 5
+     *  
+     */
+    var a = 10;
+    a %= 5;
+    console.log("a = "+a); //0
+</script>
+
+<pre>
+022. 关系运算符
+通过关系运算符可以比较两个值之间的大小关系，
+如果关系成立它会返回true，如果关系不成立则返回false
+
+> 大于号
+- 判断符号左侧的值是否大于右侧的值
+- 如果关系成立，返回true，如果关系不成立则返回false
+
+>= 大于等于
+- 判断符号左侧的值是否大于或等于右侧的值
+
+< 小于号
+<= 小于等于
+
+非数值的情况
+- 对于非数值进行比较时，会将其转换为数字然后在比较
+- 如果符号两侧的值都是字符串时，不会将其转换为数字进行比较
+而会分别比较字符串中字符的Unicode编码
+</pre>
+<script type="text/javascript">
+    console.log("第022");
+    var result = 5 > 10;//false
+    result = 5 > 4; //true
+    result = 5 > 5; //false
+    result = 5 >= 5; //true
+    result = 5 >= 4; //true
+    result = 5 < 4; //false
+    result = 4 <= 4; //true
+    console.log("result = "+result); //true
+    
+    console.log(1 > true); //false
+    console.log(1 >= true); //true
+    console.log(1 > "0"); //true
+    console.log(10 > null); // null转换为数字为0，结果为true
+    //任何值和NaN做任何比较都是false
+    var any = 10 <= NaN ;
+    console.log("NaN = " + any); //false
+    console.log(10 <= "hello"); // 字符串中有非数字的内容，则转换为NaN, 结果为false
+    console.log(true > false); //true
+    
+    console.log("1" < "5"); //true
+    console.log("11" < "5"); //true
+    
+    //比较两个字符串时，比较的是字符串的字符编码
+    console.log("a" < "b"); //true
+    //比较字符编码时是一位一位进行比较
+    //如果两位一样，则比较下一位，所以借用它来对英文进行排序
+    console.log("abc" < "acd"); //true
+    //比较中文时没有意义
+    console.log("戒" > "我"); //true
+    
+    //如果比较的两个字符串型的数字，可能会得到不可预期的结果
+    //注意：在比较两个字符串型的数字时，一定一定一定要转型
+    console.log("11123123123123123123" < +"5"); //false
+    
+</script>
+
+<pre>
+023. Unicode编码表
+在网页中使用Unicode编码
+&#编码; 这里的编码需要的是10进制
+</pre>
+<h1 style="font-size: 50px;">&#9760;</h1>
+<h1 style="font-size: 50px;">&#9856;</h1>
+<script type="text/javascript">
+    console.log("第023");
+    /*
+     * 在字符串中使用转义字符输入Unicode编码
+     *  \u四位编码
+     */
+    console.log("\u2620");
+</script>
+
+<pre>
+024. 相等运算符
+==
+相等运算符用来比较两个值是否相等，
+如果相等会返回true，否则返回false
+- 当使用==来比较两个值时，如果值的类型不同，
+则会自动进行类型转换，将其转换为相同的类型
+然后在比较
+!=
+不相等用来判断两个值是否不相等，如果不相等返回true，否则返回false
+- 使用 != 来做不相等运算
+- 不相等也会对变量进行自动的类型转换，如果转换后相等它也会返回false
+===
+全等
+- 用来判断两个值是否全等，它和相等类似，不同的是它不会做自动的类型转换
+如果两个值的类型不同，直接返回false
+!==
+不全等
+- 用来判断两个值是否不全等，和不等类似，不同的是它不会做自动的类型转换
+如果两个值的类型不同，直接返回true
+</pre>
+<script type="text/javascript">
+    console.log("第024");
+    var d11 = 1==1 ;
+    console.log("'1 == 1' = " + d11); //true
+    console.log(10 == 4); //false
+    console.log("1" == 1); //true
+    console.log(true == "1"); //true
+    console.log(null == 0); //false
+    
+    /*
+     * undefined 衍生自 null
+     *  所以这两个值做相等判断时，会返回true
+     */
+    var un = undefined==null ;
+    console.log("'undefined==null' = " + un); // true
+    
+    /*
+     * NaN不和任何值相等，包括他本身
+     */
+    var nn = NaN==NaN;
+    console.log("'NaN==NaN' = " +nn); //false
+    
+    var b = NaN;
+    //判断b的值是否是NaN
+    console.log(b == NaN); //false
+    /*
+     * 可以通过isNaN()函数来判断一个值是否是NaN
+     *  如果该值是NaN则返回true，否则返回false
+     */
+    console.log(isNaN(b)); //true
+    
+    console.log(10 != 5); //true
+    console.log(10 != 10); //false
+    //不相等也会对变量进行自动的类型转换，如果转换后相等它也会返回false
+    console.log("abcd" != "abcd"); //false
+    console.log("1" != 1);//false
+    
+    console.log("123" === 123);//false
+    console.log(null === undefined);//false
+    
+    console.log(1 !== "1"); //true
+</script>
+
+<pre>
+025. 条件运算符
+条件运算符也叫三元运算符
+语法：
+条件表达式?语句1:语句2;
+- 执行的流程：
+条件运算符在执行时，首先对条件表达式进行求值，
+如果该值为true，则执行语句1，并返回执行结果
+如果该值为false，则执行语句2，并返回执行结果
+如果条件的表达式的求值结果是一个非布尔值，
+会将其转换为布尔值然后在运算
+</pre>
+<script type="text/javascript">
+    console.log("第025");
+    
+    true ? console.log("语句1"):console.log("语句2"); //语句1
+    false ? console.log("语句1"):console.log("语句2"); //语句2
+
+    var a = 300;
+    var b = 143;
+    var c = 50;
+    
+    a > b ? console.log("a大"):console.log("b大"); //a大
+    
+    //获取a和b中的最大值
+    var max = a > b ? a : b;
+    //获取a b c 中的大值
+    max = max > c ? max : c;
+    console.log(max); // 300
+    //这种写法不推荐使用，不方便阅读
+    var max = a > b ? (a > c ? a :c) : (b > c ? b : c);
+    
+    //console.log("max = "+max);
+    
+    "hello"?console.log("语句1"):console.log("语句2"); // "hello"转换为boolean值为true，结果为：语句1
+    
+</script>
+
+<pre>
+026. 运算符的优先级
+就和数学中一样，在JS中运算符也有优先级，
+比如：先乘除 后加减
+在JS中有一个运算符优先级的表，
+在表中越靠上优先级越高，优先级越高越优先计算，
+如果优先级一样，则从左往右计算。
+但是这个表我们并不需要记忆，如果遇到优先级不清楚
+可以使用()来改变优先级
+</pre>
+<script type="text/javascript">
+    console.log("第026");
+    /*
+     * , 运算符
+     *  使用,可以分割多个语句，一般可以在声明多个变量时使用,
+     */
+    //使用,运算符同时声明多个变量
+    //var a , b , c;
+    //可以同时声明多个变量并赋值
+    //var a=1 , b=2 , c=3;
+    //alert(b);
+    
+    //var result = 1 + 2 * 3;
+    
+    /*
+     * 如果||的优先级高，或者两个一样高，则应该返回3
+     * 如果&&的优先级高，则应该返回1
+     */
+    var result = 1 || 2 && 3;
+    
+    console.log("result = "+result); // 1 说明&&优先级高
+    
+</script>
+
+<pre>
+027. 代码块
+我们的程序是由一条一条语句构成的
+语句是按照自上向下的顺序一条一条执行的
+在JS中可以使用{}来为语句进行分组,
+同一个{}中的语句我们称为是一组语句，
+它们要么都执行，要么都不执行，
+一个{}中的语句我们也称为叫一个代码块
+在代码块的后边就不用再编写;了
+
+JS中的代码块，只具有分组的的作用，没有其他的用途
+代码块内容的内容，在外部是完全可见的
+</pre>
+<script type="text/javascript">
+    console.log("第027");
+    {
+        var a = 10; 
+        console.log("hello");
+        console.log("你好");
+    }
+    console.log("a = "+a);
+</script>
+
+<pre>
+028. if语句1
+</pre>
+<script type="text/javascript">
+    console.log("第028");
+    /*
+     * 流程控制语句
+     *  - JS中的程序是从上到下一行一行执行的
+     *  - 通过流程控制语句可以控制程序执行流程，
+     *      使程序可以根据一定的条件来选择执行
+     *  - 语句的分类：
+     *      1.条件判断语句
+     *      2.条件分支语句
+     *      3.循环语句
+     * 
+     * 
+     * 条件判断语句：
+     *  - 使用条件判断语句可以在执行某个语句之前进行判断，
+     *      如果条件成立才会执行语句，条件不成立则语句不执行。
+     *  - if语句
+     *  - 语法一：
+     *      if(条件表达式){
+     *          语句...
+     *      }
+     *          
+     *      if语句在执行时，会先对条件表达式进行求值判断，
+     *      如果条件表达式的值为true，则执行if后的语句，
+     *      如果条件表达式的值为false，则不会执行if后的语句。
+     *          if语句只能控制紧随其后的那个语句,
+     *              如果希望if语句可以控制多条语句，
+     *              可以将这些语句统一放到代码块中
+     *          if语句后的代码块不是必须的，但是在开发中尽量写上代码块，即使if后只有一条语句
+     *          
+     */
+    var a = 15;
+    if(a > 10 && a <= 20){
+        console.log("a大于10，并且 a小于等于20");
+    }   
+</script>
+
+<pre>
+029. if语句2
+</pre>
+<script type="text/javascript">
+    console.log("第029");
+    /*
+     * if语句
+     *  语法二:
+     *      if(条件表达式){
+     *          语句;
+     *      }else{
+     *          语句;
+     *      }
+     * 
+     *  if...else...语句
+     *      当该语句执行时，会先对if后的条件表达式进行求值判断，
+     *          如果该值为true，则执行if后的语句
+     *          如果该值为false，则执行else后的语句
+     * 
+     *  语法三：
+     *      if(条件表达式){
+     *          语句;
+     *      }else if(条件表达式){
+     *          语句;
+     *      }else if(条件表达式){
+     *          语句;
+     *      }else{
+     *          语句;
+     *      }
+     * 
+     *      if...else if...else
+     *          当该语句执行时，会从上到下依次对条件表达式进行求值判断
+     *          如果值为true，则执行当前语句。
+     *          如果值为false，则继续向下判断。
+     *          如果所有的条件都不满足，则执行最后一个else后的语句。
+     *          该语句中，只会有一个代码块被执行，一旦代码块执行了，则直接结束语句。
+     */
+    
+    var age = 50;
+    if(age >= 60){
+        console.log("你已经退休了~~");
+    }else{
+        console.log("你还没退休~~~");
+    }
+    
+    // 从大到小判断
+    age = 55;
+    if(age > 100){
+        console.log("活着挺没意思的~~");
+    }else if(age > 80){
+        console.log("你也老大不小的了~~");
+    }else if(age > 60){
+        console.log("你也退休了~~");
+    }else if(age > 30){
+        console.log("你已经中年了~~");
+    }else if(age > 17){
+        console.log("你已经成年了");
+    }else{
+        console.log("你还是个小孩子~~");
+    }
+    
+    age = 9;
+    if(age > 0 && age <= 17){
+        console.log("你还是个小孩子");
+    }else if(age > 17 && age <= 30){
+        console.log("你已经成年了");
+    }else if(age > 30 && age <= 60){
+        console.log("你已经中年了");
+    }else if(age > 60 && age <= 80){
+        console.log("你已经退休了");
+    }else{
+        console.log("你岁数挺大的了~~");
+    }
+</script>
+
+<pre>
+030. if练习1
+</pre>
+<script type="text/javascript">
+    console.log("第030");
+    /*
+     *  从键盘输入小明的期末成绩:
+     *  当成绩为100时，'奖励一辆BMW'
+     *  当成绩为[80-99]时，'奖励一台iphone15s'
+     *  当成绩为[60-80]时，'奖励一本参考书'
+     *  其他时，什么奖励也没有
+     */
+    
+    /*
+     * prompt()可以弹出一个提示框，该提示框中会带有一个文本框，
+     *  用户可以在文本框中输入一段内容，该函数需要一个字符串作为参数，
+     *  该字符串将会作为提示框的提示文字
+     * 
+     * 用户输入的内容将会作为函数的返回值返回，可以定义一个变量来接收该内容
+     */
+    //score就是小明的期末成绩
+    
+    //var score = prompt("输入考试成绩（0-100）");
+    
+    while(true){
+        var score = prompt("输入考试成绩（0-100）");
+        if(score >= 0 && score <=100){
+            break;
+        }
+        alert("请输入合法的成绩~~");
+    }
+    
+    
+    //判断值是否合法
+    if ( score < 0 || score >100 || isNaN(score)) {
+    	console.log("输入的值不合法!!!");
+    } else{
+    	if(score == 100){
+            console.log("奖励一辆BMW");
+        }else if( score >= 80 ){
+            console.log("奖励一台iphone15s");
+        }else if( score >= 60 ){
+            console.log("奖励一本参考书");
+        }else {
+            console.log("棍子一根~~");
+        }
+    }
+</script>
+
+
+</body>
+</html>
